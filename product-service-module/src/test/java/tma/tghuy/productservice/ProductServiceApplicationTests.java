@@ -23,8 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @AutoConfigureMockMvc
 class ProductServiceApplicationTests {
-	@Autowired
-	ObjectMapper objectMapper;
+	ObjectMapper objectMapper = new ObjectMapper();
 
 	@Autowired
 	MockMvc mockMvc;
