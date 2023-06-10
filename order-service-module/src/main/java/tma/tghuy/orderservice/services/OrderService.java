@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
     public void placeOrder(OrderRequestDTO requestDTO){
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
@@ -29,8 +29,8 @@ public class OrderService {
         order.setOrderLineItemsList(orderLineItemsList);
         List<String> skuCodes = orderLineItemsList.stream().map(OrderLineItems::getSkuCode).toList();
 
-        InventoryResponse[] inventoryResponses = webClient.get()
-                .uri("http://localhost:8083/api/inventory",
+        InventoryResponse[] inventoryResponses = webClientBuilder.build().get()
+                .uri("http://inventory-service/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve().bodyToMono(InventoryResponse[].class).block();
         if (inventoryResponses == null || inventoryResponses.length == 0) {
