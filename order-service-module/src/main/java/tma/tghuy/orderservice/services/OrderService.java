@@ -10,16 +10,14 @@ import tma.tghuy.orderservice.model.Order;
 import tma.tghuy.orderservice.model.OrderLineItems;
 import tma.tghuy.orderservice.repos.OrderRepository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClientBuilder;
-    public void placeOrder(OrderRequestDTO requestDTO){
+    public Map<String, String> placeOrder(OrderRequestDTO requestDTO){
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
         List<OrderLineItems> orderLineItemsList = requestDTO.getOrderLineItemsDTOS()
@@ -39,7 +37,9 @@ public class OrderService {
         Boolean isInStock = Arrays.stream(inventoryResponses).allMatch(InventoryResponse::isInStock);
         if (isInStock){
             orderRepository.save(order);
-            return;
+            Map<String, String> message = new HashMap<>();
+            message.put("message", "Placed order successfully");
+            return message;
         }
         throw new IllegalArgumentException("Product is not in stock, please try again later.");
 
